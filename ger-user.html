@@ -1,0 +1,234 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Login</title>
+    <link rel="stylesheet" href="styles.css">
+    <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css" integrity="sha512-SnH5WK+bZxgPHs44uWIX+LLJAJ9/2PkPKZ5QiAj6Ta86w+fsb2TkcmfRyVX3pBnMFcV7oQPJkl9QevSCWr3W6A==" crossorigin="anonymous" referrerpolicy="no-referrer" />
+</head>
+<body>
+    <div class="grid-container">
+        <div class="grid-item1">
+            <img class="logoh" src="https://i.im.ge/2024/04/04/WEcTRc.logo-sem-fundo.png" alt="">
+            <div class="user-photo-container">
+                <img src="https://i.im.ge/2024/04/05/WYszip.324555409-1256303098566656-6239260008475768289-n.jpeg" alt="User photo" class="user-photo">
+                <div class="cinfo"><p class="pinfo">caixa de informação</p></div>
+            </div>
+            <nav class="menu">    
+                <ul class="menu">
+                    <li class="btnmenu"><a class="a2" href="ger-hor.html">Horario</a></li>
+                    <li class="btnmenu"><a class="a2" href="ger-user.html">USUARIOS</a></li>
+                    <li class="btnmenu"><a class="a2" href="ger-rot.html">EDITAR ROTAS</a></li>              
+                    <li class="btnmenu"><a class="a2" href="#">EDITAR REDES S.</a></li>
+                    <li class="btnmenu"><a class="a2" href="login.html">sair</a></li>
+                </ul>   
+            </nav>            
+        </div>
+        <div class="grid-item2">
+            <h1 class="arger">  Area de Gerenciamento de usuarios</h1>
+            <div class="boxtab">
+                <div class="cabetab"> 
+                    
+                </div>
+                
+                <table id="tab12" class="table table-dark">
+                    <thead>
+                        <th>Son</th>
+                        <th>CPF</th>
+                        <th>Email</th>
+                        <th>Instituição</th>
+                        <th>Nome</th>
+                        <th>Senha</th>
+                        <th>Telefone</th>
+                        <th>editar</th>
+                    </thead>
+                    <tbody id="tbody1"></tbody>
+                </table>
+                
+                <button class="btnfun"><i class="fa-solid fa-plus"></i> <a class="a2" href="cadastrouser.html">Adicionar</a></button>
+            </div>
+            <!-- Popup para edição -->
+            <div id="editPopup" class="popup"> 
+                <div class="popup-content">
+                    <img class="logoh" src="https://i.im.ge/2024/04/04/WEcTRc.logo-sem-fundo.png" alt="">
+                    <input type="text" class="editpop" id="editCpf" placeholder="Novo CPF">
+                    <input type="text" class="editpop" id="editEmail" placeholder="Novo Email">
+                    <input type="text" class="editpop" id="editInstituicao" placeholder="Nova instituicao">
+                    <input type="text" class="editpop" id="editNome" placeholder="Novo Nome">
+                    <input type="text" class="editpop" id="editSenha" placeholder="Nova Senha">
+                    <input type="text" class="editpop" id="editTelefone" placeholder="Novo Telefone">
+                    <button onclick="saveChanges()">Salvar</button>
+                    <button onclick="validateChanges()">Validar</button>
+                    <button onclick="cancelEdit()">Cancelar</button>
+                </div>
+            </div>
+        </div>
+    </div>
+</body>
+<script type="module">
+    var stdNo = 0;
+    var tbody = document.getElementById('tbody1');
+
+    function AddItemToTable(cpf, email, instituicao, nome, senha, telefone) {
+        let trow = document.createElement("tr");
+        let td1 = document.createElement("td");
+        let td2 = document.createElement("td");
+        let td3 = document.createElement("td");
+        let td4 = document.createElement("td");
+        let td5 = document.createElement("td");
+        let td6 = document.createElement("td");
+        let td7 = document.createElement("td");
+        let td8 = document.createElement("td"); // Nova célula para os botões
+
+        td1.innerHTML = ++stdNo;
+        td2.innerHTML = cpf || "";   
+        td3.innerHTML = email || "";
+        td4.innerHTML = instituicao || "";
+        td5.innerHTML = nome || "";
+        td6.innerHTML = senha || "";
+        td7.innerHTML = telefone || "";
+        
+        // Botão de Excluir
+        let deleteButton = document.createElement("button");
+        deleteButton.textContent = "Excluir";
+        deleteButton.classList.add("delete-button");
+        deleteButton.addEventListener("click", function() {
+            // Adicione aqui a lógica para excluir o usuário
+            // Você pode usar o ID do usuário ou outras informações para identificar o usuário a ser excluído
+        });
+
+        // Botão de Alterar
+        let editButton = document.createElement("button");
+        editButton.textContent = "Alterar";
+        editButton.classList.add("edit-button");
+        editButton.addEventListener("click", function() {
+            openEditPopup(cpf, email, instituicao, nome, senha, telefone); // Chamada da função para abrir o popup de edição
+        });
+
+        td8.appendChild(deleteButton);
+        td8.appendChild(editButton);
+
+        trow.appendChild(td1);
+        trow.appendChild(td2);
+        trow.appendChild(td3);
+        trow.appendChild(td4);
+        trow.appendChild(td5);
+        trow.appendChild(td6);
+        trow.appendChild(td7);
+        trow.appendChild(td8); // Adicionando a nova célula com os botões
+
+        tbody.appendChild(trow);
+    }
+
+    function AddAllItensToTabe(usuarios) {
+        stdNo = 0;
+        tbody.innerHTML = "";
+        usuarios.forEach(element => {
+            AddItemToTable(element.cpf, element.email, element.instituicao, element.nome, element.senha, element.telefone);
+        });
+    }
+
+    import { initializeApp } from "https://www.gstatic.com/firebasejs/10.11.1/firebase-app.js";
+    import { getDatabase, ref, get } from "https://www.gstatic.com/firebasejs/10.11.1/firebase-database.js";
+
+    const firebaseConfig = {
+      apiKey: "AIzaSyD26pWZ9AMYoisXfrtm7038K2SuuXuWkr8",
+      authDomain: "glor-ae49f.firebaseapp.com",
+      databaseURL: "https://glor-ae49f-default-rtdb.firebaseio.com",
+      projectId: "glor-ae49f",
+      storageBucket: "glor-ae49f.appspot.com",
+      messagingSenderId: "677710403853",
+      appId: "1:677710403853:web:f67284b068399eebb97844"
+    };
+    const app = initializeApp(firebaseConfig);
+    const db = getDatabase();
+
+    function getAllDataOnce() {
+        const dbRef = ref(db, "usuarios");
+
+        get(dbRef).then((snapshot) => {
+            var users = [];
+            snapshot.forEach((childSnapshot) => {
+                users.push(childSnapshot.val());
+            });
+            AddAllItensToTabe(users);
+        }).catch((error) => {
+            console.error("Erro ao obter os dados: ", error);
+        });
+    }
+
+    window.onload = getAllDataOnce;
+
+    // Função para abrir o popup de edição
+    function openEditPopup(cpf, email, instituicao, nome, senha, telefone) {
+        document.getElementById('editCpf').value = cpf;
+        document.getElementById('editEmail').value = email;
+        document.getElementById('editInstituicao').value = instituicao;
+        document.getElementById('editNome').value = nome;
+        document.getElementById('editSenha').value = senha;
+        document.getElementById('editTelefone').value = telefone;
+
+        document.getElementById('editPopup').style.display = 'block';
+    }
+
+    // Função para fechar o popup de edição
+    function closeEditPopup() {
+        document.getElementById('editPopup').style.display = 'none';
+    }
+
+    // Função para salvar as alterações
+function saveChanges() {
+    const novoCpf = document.getElementById('editCpf').value;
+    const novoEmail = document.getElementById('editEmail').value;
+    const novaInstituicao = document.getElementById('editInstituicao').value;
+    const novoNome = document.getElementById('editNome').value;
+    const novaSenha = document.getElementById('editSenha').value;
+    const novoTelefone = document.getElementById('editTelefone').value;
+    
+    function getUserId() {
+
+    // Obtenha o ID do usuário atualmente em edição (se houver)
+    const userId = getUserId(); // Implemente essa função para obter o ID do usuário
+
+    if (userId) {
+        // Atualize os dados do usuário existente
+        const usuarioRef = firebase.database().ref('usuarios/' + userId);
+        usuarioRef.update({
+            cpf: novoCpf,
+            email: novoEmail,
+            instituicao: novaInstituicao,
+            nome: novoNome,
+            senha: novaSenha,
+            telefone: novoTelefone
+        })
+        .then(() => {
+            console.log('Alterações salvas com sucesso!');
+            closeEditPopup(); // Feche o popup após salvar as alterações
+        })
+        .catch(error => {
+            console.error('Erro ao salvar as alterações:', error);
+        });
+    } else {
+        console.error('ID do usuário não encontrado.'); // Exiba um erro se o ID do usuário não estiver disponível
+    }
+}
+return document.getElementById('userId').value; // Supondo que você tenha um elemento com o ID 'userId' que contenha o ID do usuário
+}
+
+// Função para validar as alterações (opcional)
+function validateChanges() {
+    // Implemente a lógica de validação aqui, se necessário
+    // Esta função é opcional e pode ser usada para validar as alterações antes de salvá-las
+}
+
+// Função para cancelar a edição e fechar o popup
+function cancelEdit() {
+    closeEditPopup();
+}
+
+
+</script>
+</html>

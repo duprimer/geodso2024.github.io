@@ -1,0 +1,204 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Login</title>
+    <link rel="stylesheet" href="styles.css">
+    <link href="https://fonts.googleapis.com/icon?family=Material+Icons"
+      rel="stylesheet">
+       
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css" 
+      integrity="sha512-SnH5WK+bZxgPHs44uWIX+LLJAJ9/2PkPKZ5QiAj6Ta86w+fsb2TkcmfRyVX3pBnMFcV7oQPJkl9QevSCWr3W6A==" 
+      crossorigin="anonymous" referrerpolicy="no-referrer" />
+</head>
+<body>
+    <div class="grid-container">
+        <div class="grid-item1">
+            <img class="logoh" src="https://i.im.ge/2024/04/04/WEcTRc.logo-sem-fundo.png" alt="">
+            <div class="user-photo-container">
+                <img src="https://i.im.ge/2024/04/05/WYszip.324555409-1256303098566656-6239260008475768289-n.jpeg" alt="User photo" class="user-photo">
+                <div class="cinfo"><p class="pinfo">caixa de informação</p></div>
+            </div>
+            <nav class="menu">    
+                <ul class="menu">
+                    <li class="btnmenu"><a class="a2" href="ger-hor.html">Horario</a></li>
+                    <li class="btnmenu"><a class="a2" href="ger-user.html">USUARIOS</a></li>
+                    <li class="btnmenu"><a class="a2" href="ger-rot.html">EDITAR ROTAS</a></li>              
+                    <li class="btnmenu"><a class="a2" href="#">EDITAR REDES S.</a></li>
+                    <li class="btnmenu"><a class="a2" href="login.html">sair</a></li>
+                </ul>   
+            </nav>
+        </div>
+        <div class="grid-item2">
+            <h1 class="arger">Área de Gerenciamento de Rotas</h1>
+            <div class="boxtab">
+                <div class="cabetab"> 
+                    <p class="pcabe"> <input type="text" name="pesquisa_por_aluno" id="pesid" placeholder="pesquisa por aluno"> </p>        
+                    <button id="btnpes"><i class="fas fa-search"></i> pesquisa </button>
+                </div>
+                <table id="tab12" class="table table-dark">
+                    <thead>
+                        <th>Son</th>
+                        <th>Horarios</th>
+                        <th>Veiculos</th>
+                        <th>Saidas</th>
+                        <th>Destinos</th>
+                        <th>Edit</th>
+                    </thead>
+                    <tbody id="tbody1"></tbody>
+                </table>
+                
+
+                
+                <button class="btnfun"><i class="fa-solid fa-plus"></i> <a class="a2" href="cadastrarota.html">Adicionar</a></button>
+            </div>
+            <!-- Popup para edição -->
+            <div id="editPopup" class="popup"> 
+                <div class="popup-content">
+                    <img class="logoh" src="https://i.im.ge/2024/04/04/WEcTRc.logo-sem-fundo.png" alt="">
+                    <input type="text" class="editpop" id="editHorarios" placeholder="Novo Horário">
+                    <input type="text" class="editpop" id="editVeiculos" placeholder="Novo Veículo">
+                    <input type="text" class="editpop" id="editSaidas" placeholder="Nova Saída">
+                    <input type="text" class="editpop" id="editDestinos" placeholder="Novo Destino">
+                    <button onclick="saveChanges()">Salvar</button>
+                    
+                    <button class="btnfun" onclick="closeEditPopup()">Fechar Popup</button> <!-- Botão para fechar o popup -->
+                </div>
+            </div>
+        </div>
+    </div>
+</body>
+<script type="module">
+    var stdNo = 0;
+    var tbody = document.getElementById('tbody1');
+
+    function AddItemToTable(Horarios, veiculos, Saidas, Destinos) {
+        let trow = document.createElement("tr");
+        let td1 = document.createElement("td");
+        let td2 = document.createElement("td");
+        let td3 = document.createElement("td");
+        let td4 = document.createElement("td");
+        let td5 = document.createElement("td");
+        let td8 = document.createElement("td"); // Nova célula para os botões
+
+        td1.innerHTML = ++stdNo;
+        td2.innerHTML = Horarios || "";   
+        td3.innerHTML = veiculos || "";
+        td4.innerHTML = Saidas || "";
+        td5.innerHTML = Destinos || "";
+        
+        // Botão de Excluir
+        let deleteButton = document.createElement("button");
+        deleteButton.textContent = "Excluir";
+        deleteButton.classList.add("delete-button");
+        deleteButton.addEventListener("click", function() {
+            // Adicione aqui a lógica para excluir o usuário
+            // Você pode usar o ID do usuário ou outras informações para identificar o usuário a ser excluído
+        });
+
+        // Botão de Alterar
+        let editButton = document.createElement("button");
+        editButton.textContent = "Alterar";
+        editButton.classList.add("edit-button");
+        editButton.addEventListener("click", function() {
+            openEditPopup(Horarios, veiculos, Saidas, Destinos); // Chamada da função para abrir o popup de edição
+        });
+
+        td8.appendChild(deleteButton);
+        td8.appendChild(editButton);
+
+        trow.appendChild(td1);
+        trow.appendChild(td2);
+        trow.appendChild(td3);
+        trow.appendChild(td4);
+        trow.appendChild(td5);
+        trow.appendChild(td8); // Adicionando a nova célula com os botões
+
+        tbody.appendChild(trow);
+    }
+
+    function AddAllItensToTable(rotas) {
+        stdNo = 0;
+        tbody.innerHTML = "";
+        rotas.forEach(rota => {
+            AddItemToTable(rota.Horarios, rota.Veiculos, rota.Saidas, rota.Destinos);
+        });
+    }
+
+    import { initializeApp } from "https://www.gstatic.com/firebasejs/10.11.1/firebase-app.js";
+    import { getDatabase, ref, get } from "https://www.gstatic.com/firebasejs/10.11.1/firebase-database.js";
+
+    const firebaseConfig = {
+        apiKey: "AIzaSyD26pWZ9AMYoisXfrtm7038K2SuuXuWkr8",
+        authDomain: "glor-ae49f.firebaseapp.com",
+        databaseURL: "https://glor-ae49f-default-rtdb.firebaseio.com",
+        projectId: "glor-ae49f",
+        storageBucket: "glor-ae49f.appspot.com",
+        messagingSenderId: "677710403853",
+        appId: "1:677710403853:web:f67284b068399eebb97844"
+    };
+    const app = initializeApp(firebaseConfig);
+    const db = getDatabase();
+
+    function getAllDataOnce() {
+        const dbRef = ref(db, "rota");
+
+        get(dbRef).then((snapshot) => {
+            var rotas = [];
+            snapshot.forEach((childSnapshot) => {
+                rotas.push(childSnapshot.val());
+            });
+            AddAllItensToTable(rotas);
+        }).catch((error) => {
+            console.error("Erro ao obter os dados: ", error);
+        });
+    }
+
+    window.onload = getAllDataOnce;
+
+    // Função para abrir o popup de edição
+    function openEditPopup(Horarios, veiculos, Saidas, Destinos) {
+        document.getElementById('editHorarios').value = Horarios;
+        document.getElementById('editVeiculos').value = veiculos;
+        document.getElementById('editSaidas').value = Saidas;
+        document.getElementById('editDestinos').value = Destinos;
+        document.getElementById('editPopup').style.display = 'block';
+    }
+
+   
+
+    // Função para salvar as alterações
+    function saveChanges() {
+        // Obter os novos valores dos campos de edição
+        const novoHorarios = document.getElementById('editHorarios').value;
+        const novoVeiculos = document.getElementById('editVeiculos').value;
+        const novaSaidas = document.getElementById('editSaidas').value;
+        const novoDestinos = document.getElementById('editDestinos').value;
+
+        // Atualizar os dados no Firebase com os novos valores
+        // Por exemplo, se `idDoItem` é o identificador único do item a ser atualizado:
+        const idDoItem = "idDoItem"; // Defina o ID do item que está sendo editado
+        const itemRef = ref(db, "caminho/do/item/" + idDoItem);
+        update(itemRef, {
+            Horarios: novoHorarios,
+            Veiculos: novoVeiculos,
+            Saidas: novaSaidas,
+            Destinos: novoDestinos
+        }).then(() => {
+            // Sucesso ao atualizar os dados
+            console.log("Dados atualizados com sucesso!");
+            // Feche o popup de edição
+            
+        }).catch((error) => {
+            // Erro ao atualizar os dados
+            console.error("Erro ao atualizar os dados: ", error);
+        });
+    }
+
+    function closeEditPopup() {
+        document.getElementById('editPopup').style.display = 'none';
+    }
+</script>
+</html>
